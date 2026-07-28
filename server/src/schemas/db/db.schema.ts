@@ -1,4 +1,14 @@
 import { decimal, pgTable, uuid, varchar, timestamp, boolean, pgEnum } from "drizzle-orm/pg-core";
+import { hash } from "node:crypto";
+
+
+export const organizationTable = pgTable("organizations", {
+  id: uuid().defaultRandom().primaryKey(),
+  name: varchar({ length: 255 }).notNull(),
+  parkingLot_id: uuid().notNull().references(() => parkingLotTable.id, { onDelete: "cascade" }),
+  admin_id: uuid().notNull().references(() => adminTable.id, { onDelete: "cascade" })
+}); 
+
 
 export const parkingLotTable = pgTable("parking_lots", {
   id: uuid().defaultRandom().primaryKey(),
@@ -6,21 +16,25 @@ export const parkingLotTable = pgTable("parking_lots", {
   gate: varchar({ length: 255 }).notNull(),
 });
 
+
 export const adminTable = pgTable("admins", {
   id: uuid().defaultRandom().primaryKey(),
   name: varchar({ length: 255 }).notNull(),
   email: varchar({ length: 255 }).notNull().unique(),
+  hashed_password: varchar({ length: 255 }).notNull(), 
 });
+
 
 export const operatorTable = pgTable("operators", {
   id: uuid().defaultRandom().primaryKey(),
   name: varchar({ length: 255 }).notNull(),
   email: varchar({ length: 255 }).notNull().unique(),
+  hashed_password: varchar({ length: 255 }).notNull(),
   admin_id: uuid().notNull().references(() => adminTable.id, { onDelete: "cascade" })
 });
 
 
-const gateTypeEnum = pgEnum("gate_type", ["Entry", "Exit"]);
+export const gateTypeEnum = pgEnum("gate_type", ["Entry", "Exit"]);
 
 export const gateTable = pgTable("gates", {
   id: uuid().defaultRandom().primaryKey(),
@@ -30,10 +44,12 @@ export const gateTable = pgTable("gates", {
   parkingLot_id: uuid().notNull().references(() => parkingLotTable.id, { onDelete: "cascade" })
 });
 
+
 export const vehicleTable = pgTable("vehicles", {
   id: uuid().defaultRandom().primaryKey(),
   type: varchar({ length: 255 }).notNull(),
 });
+
 
 export const parkingSessionTable = pgTable("parking_sessions", {
   id: uuid().defaultRandom().primaryKey(),
@@ -46,3 +62,4 @@ export const parkingSessionTable = pgTable("parking_sessions", {
   isActive: boolean().notNull().default(true),
   amountPaid: decimal({ precision: 10, scale: 2 }),
 });
+
