@@ -1,0 +1,1 @@
+This project is meant to showcase a multi-tenant parking infrastructure system and is designed to manage parking spaces for multiple tenants (operators & admins), allowing the operators to manage the parking spaces and the admins to oversee the entire system.
