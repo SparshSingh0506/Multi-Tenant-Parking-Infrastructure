@@ -1,13 +1,15 @@
-import 'dotenv/config';
+import { env } from './env.config.js';
 import { drizzle } from 'drizzle-orm/node-postgres';
 
-export const db = drizzle(process.env.DATABASE_URL!);
+export const db = drizzle(env.DATABASE_URL);
 
 export const connectToDb = () => {
   try {
     db.select();
     console.log('Connected to the database successfully.');
-  } catch (error) { 
-    console.error('Error connecting to the database:', error);
+  } 
+  
+  catch (error) { 
+    throw new Error('Failed to connect to the database: ' + (error as Error).message);
   }
 };
