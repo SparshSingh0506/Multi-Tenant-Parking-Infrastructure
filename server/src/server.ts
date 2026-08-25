@@ -1,12 +1,12 @@
 import { serve } from '@hono/node-server'
 
-import { env, validateEnv } from './config/env.config.js'
-import { connectToDb } from './config/db.config.js';
+import { env, validateEnv } from './configs/env.config.js'
+import { connectToDb } from './configs/db.config.js';
 
 import app from './app.js'
 
 validateEnv(); 
-connectToDb();
+await connectToDb();
 
 serve(
   {

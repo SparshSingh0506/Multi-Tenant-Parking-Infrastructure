@@ -1,10 +1,7 @@
 import { Hono } from "hono";
 
 import { authRouter } from "./auth.routes.js";
-import { adminRouter } from "./admin.routes.js";
 
+export const index = new Hono();
 
-export const indexRouter = new Hono();
-
-indexRouter.route('/auth', authRouter);
-indexRouter.route('/admin', adminRouter);
+index.route('/auth', authRouter); // POST, GET : /api/v1/auth/*

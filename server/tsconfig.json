@@ -10,9 +10,19 @@
     ],
     "jsx": "react-jsx",
     "jsxImportSource": "hono/jsx",
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ]
+    },
     "rootDir": ".",
     "outDir": "./dist"
   },
-  "exclude": ["node_modules"],
-  "include": ["tests/**/*", "src/**/*"] 
+  "exclude": [
+    "node_modules"
+  ],
+  "include": [
+    "tests/**/*",
+    "src/**/*"
+  ]
 }

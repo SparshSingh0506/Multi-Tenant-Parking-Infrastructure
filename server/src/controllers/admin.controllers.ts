@@ -1,6 +1,12 @@
 import type { Context } from "hono";
 
-export const adminDashboardController = (c: Context) => {
+
+export const postOnboardingController = (c: Context) => {
+
+}
+
+
+export const getDashboardController = (c: Context) => {
 
   return c.json({
     message: "Admin dashboard retrieved successfully.",
