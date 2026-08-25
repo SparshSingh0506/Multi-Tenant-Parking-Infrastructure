@@ -10,5 +10,7 @@
   * Created the necessary routes and services for Admin operations.
 
 ## Day 3
-  * Implemented Admin login with JWT token generation for authentication.
+  * 
   * Added error handling and validation for the Admin registration and login processes.
+
+## Day 4
