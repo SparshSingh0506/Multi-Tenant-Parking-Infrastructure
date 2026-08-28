@@ -1,5 +1,5 @@
 import 'dotenv/config';
-import { envSchema } from '../schemas/env.schema.js';
+import { envSchema } from '../zod-schemas/env.schema.js';
 
 export const env = envSchema.parse(process.env);
 

@@ -1,5 +1,5 @@
 import { Hono } from 'hono';
-import { index } from './routes/index.routes.js';
+import { index } from './routes/_index.routes.js';
 
 const app = new Hono()
 

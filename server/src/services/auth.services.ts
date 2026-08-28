@@ -1,4 +1,4 @@
-import type { ManagerRegister } from "@/schemas/auth.schema.js";
+import type { ManagerRegister } from "@/zod-schemas/auth.schema.js";
 
 import { env } from "../configs/env.config.js";
 
