@@ -1,9 +1,9 @@
 import {z} from "zod";
 
 export const onboardingSchema = z.object({
-  lotName: z.string().min(1, "Parking lot name is required"),
+  parkingLotName: z.string().min(1, "Parking lot name is required"),
 
-  lotCapacity: z.number().min(1, "Parking lot capacity must be at least 1"),
+  parkingLotCapacity: z.number().min(1, "Parking lot capacity must be at least 1"),
 
   gates: z.array(z.object({
     name: z.string().min(1, "Gate name is required"),

@@ -1,7 +1,8 @@
 import { Pool } from 'pg';
 import { env } from './env.config.js';
 import { drizzle } from 'drizzle-orm/node-postgres';
-import { sql } from 'drizzle-orm/sql/sql';
+import {snakeCase} from "drizzle-orm/pg-core";
+import { sql } from 'drizzle-orm';
 
 export const pool = new Pool({
   connectionString: env.DATABASE_URL,
@@ -9,7 +10,9 @@ export const pool = new Pool({
   idleTimeoutMillis: 30000,
 });
 
-export const db = drizzle({client: pool});
+export const db = drizzle({
+  client: pool, 
+});
 
 export const connectToDb = async () => { 
   try {

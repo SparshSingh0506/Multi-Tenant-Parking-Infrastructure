@@ -1,8 +1,8 @@
 import { Hono } from "hono";
-import { getOrganizationController } from "@/controllers/organization.controllers.js";
+import { postOnboardingController } from "@/controllers/onboarding.controllers.js";
 
 const router = new Hono();
 
-router.get('/', getOrganizationController);
+router.post('/', postOnboardingController);
 
 export default router;

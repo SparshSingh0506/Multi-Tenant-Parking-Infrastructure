@@ -1,10 +1,11 @@
 import { defineRelations } from "drizzle-orm";
-import { pgTable, text, timestamp, boolean, index, type AnyPgColumn, uuid } from "drizzle-orm/pg-core";
+import { pgTable, text, timestamp, boolean, index, type AnyPgColumn, uuid, snakeCase } from "drizzle-orm/pg-core";
 
 import { parkingLot } from "./db.schema.js";
 
+const table = snakeCase.table;
 
-export const user = pgTable("user", {
+export const user = table("user", {
   id: text().primaryKey(),
   name: text().notNull(),
   email: text().notNull().unique(),
@@ -17,11 +18,11 @@ export const user = pgTable("user", {
     .notNull(),
 
   // additional fields:
-  managerId: text("manager_id").references((): AnyPgColumn => user.id, { onDelete: "set null" }), // null: user is manager, not null: user is operator and this field references the manager's id
-  parkingLotId: uuid("parking_lot_id").references((): AnyPgColumn => parkingLot.id, { onDelete: "cascade" })
+  managerId: text().references((): AnyPgColumn => user.id, { onDelete: "set null" }), // null: user is manager, not null: user is operator and this field references the manager's id
+  parkingLotId: uuid().references((): AnyPgColumn => parkingLot.id, { onDelete: "cascade" })
 });
 
-export const session = pgTable("session", {
+export const session = table("session", {
   id: text().primaryKey(),
   expiresAt: timestamp("expires_at").notNull(),
   token: text().notNull().unique(),
@@ -40,7 +41,7 @@ export const session = pgTable("session", {
   ]
 );
 
-export const account = pgTable("account", {
+export const account = table("account", {
   id: text().primaryKey(),
   accountId: text("account_id").notNull(),
   providerId: text("provider_id").notNull(),
@@ -65,7 +66,7 @@ export const account = pgTable("account", {
   ]
 );
 
-export const verification = pgTable("verification", {
+export const verification = table("verification", {
   id: text().primaryKey(),
   identifier: text().notNull(),
   value: text().notNull(),
