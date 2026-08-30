@@ -1,7 +1,8 @@
 import { defineRelations } from "drizzle-orm";
 import { pgTable, text, timestamp, boolean, index, type AnyPgColumn, uuid } from "drizzle-orm/pg-core";
 
-import { organization } from "./db.schema.js";
+import { parkingLot } from "./db.schema.js";
+
 
 export const user = pgTable("user", {
   id: text().primaryKey(),
@@ -17,7 +18,7 @@ export const user = pgTable("user", {
 
   // additional fields:
   managerId: text("manager_id").references((): AnyPgColumn => user.id, { onDelete: "set null" }), // null: user is manager, not null: user is operator and this field references the manager's id
-  organizationId: uuid("organization_id").references((): AnyPgColumn => organization.id, { onDelete: "cascade" })
+  parkingLotId: uuid("parking_lot_id").references((): AnyPgColumn => parkingLot.id, { onDelete: "cascade" })
 });
 
 export const session = pgTable("session", {

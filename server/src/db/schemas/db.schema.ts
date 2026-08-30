@@ -1,17 +1,11 @@
-import { decimal, pgTable, uuid, varchar, timestamp, boolean, pgEnum, text } from "drizzle-orm/pg-core";
+import { decimal, pgTable, uuid, timestamp, boolean, pgEnum, text } from "drizzle-orm/pg-core";
 
-export const organization = pgTable("organization", {
-  id: uuid().defaultRandom().primaryKey(),
-  name: text().notNull(),
-  parkingLot_id: uuid().notNull().references(() => parkingLot.id, { onDelete: "cascade" }),
-}); 
 
 export const parkingLot = pgTable("parking_lot", {
   id: uuid().defaultRandom().primaryKey(),
   name: text().notNull(),
   gate: text().notNull(),
 });
-
 
 // export const userTable = pgTable("users", {
 //   id: uuid().defaultRandom().primaryKey(),

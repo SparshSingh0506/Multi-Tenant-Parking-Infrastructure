@@ -29,7 +29,7 @@ export const auth = betterAuth({
         required: false,
         input: false
       },
-      organizationId: {
+      parkingLotId: {
         type: "string",
         required: false,
         input: false
