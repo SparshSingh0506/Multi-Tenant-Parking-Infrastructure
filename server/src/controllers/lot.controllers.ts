@@ -1,7 +1,7 @@
 import type { Context } from "hono";
 
 
-export const postOnboardingController = (c: Context) => {
+export const postLotController = (c: Context) => {
   const body = c.req.json();
   /*
   body schema: {
