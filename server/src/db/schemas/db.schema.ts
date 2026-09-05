@@ -9,7 +9,6 @@ export const parkingLot = table("parking_lot", {
   name: text().notNull(),
 });
 
-
 export const gateTypeEnum = pgEnum("gate_type", ["Entry", "Exit"]);
 
 export const gate = table("gate", {

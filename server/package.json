@@ -2,7 +2,7 @@
   "name": "server",
   "type": "module",
   "scripts": {
-    "dev": "tsx watch src/server.ts",
+    "dev": "bun run --hot src/server.js",
     "build": "tsc",
     "start": "node dist/server.js"
   },

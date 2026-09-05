@@ -1,14 +1,12 @@
+import { postLotService } from "@/services/lot.services.js";
+import type { PostLotSchema } from "@/zod-schemas/lot.schema.js";
 import type { Context } from "hono";
 
 
-export const postLotController = (c: Context) => {
-  const body = c.req.json();
-  /*
-  body schema: {
-    "parkingLotName": "string",
-  }
-  */
-  const data = {};
+export const postLotController = async (c: Context) => {
+  const body: PostLotSchema = await c.req.json() as PostLotSchema;
+
+  const data = await postLotService(body);
 
   return c.json({ data }, 200);
 }

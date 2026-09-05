@@ -5,15 +5,19 @@ import { connectToDb } from './configs/db.config.js';
 
 import app from './app.js'
 
+
 validateEnv(); 
 await connectToDb();
 
-serve(
-  {
-    fetch: app.fetch,
-    port: env.PORT,
-  }, 
-  (info) => {
-    console.log(`Server is now running on http://localhost:${info.port}`)
+serve({
+  fetch: app.fetch, 
+  port: env.PORT,
   }
-)
+);
+
+console.log(`Server running on port ${env.PORT}`);
+
+// export default { 
+//   port: env.PORT,
+//   fetch: app.fetch, 
+// } 
