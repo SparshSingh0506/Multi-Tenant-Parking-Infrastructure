@@ -32,16 +32,11 @@ export const vehicleSlots = table("vehicle_slots", {
   capacity: integer().notNull(),
 });
 
-export const vehicle = table("vehicle", {
-  id: uuid().defaultRandom().primaryKey(),
-  plateId: text().notNull(),
-});
-
-
 export const ticket = table("ticket", {
   id: uuid().defaultRandom().primaryKey(),
-  vehicleId: uuid().notNull().references(() => vehicle.id, { onDelete: "cascade" }),
   parkingLotId: uuid().notNull().references(() => parkingLot.id, { onDelete: "cascade" }),
+  vehiclePlateId: text().notNull(),
+  vehicleCategoryId: uuid().notNull().references(() => vehicleCategory.id, { onDelete: "cascade" }),
   entryTime: timestamp().notNull(),
   entryGateId: uuid().notNull().references(() => gate.id, { onDelete: "cascade" }),
   exitTime: timestamp(),
