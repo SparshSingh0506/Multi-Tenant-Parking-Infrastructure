@@ -9,8 +9,8 @@ export const index = new Hono();
 
 index.route('/auth', authRouter); // /api/v1/auth/*
 index.route('/user', userRouter);
-index.route('/dashboard', dashboardRouter);
 index.route('/lot', lotRouter);
+index.route('/dashboard', dashboardRouter);
 
 
 

@@ -9,15 +9,10 @@ import app from './app.js'
 validateEnv(); 
 await connectToDb();
 
+//not using Bun's built-in server to keep the codebase executable for general Node.js environments. 
 serve({
   fetch: app.fetch, 
   port: env.PORT,
-  }
-);
+});
 
 console.log(`Server running on port ${env.PORT}`);
-
-// export default { 
-//   port: env.PORT,
-//   fetch: app.fetch, 
-// } 

@@ -26,6 +26,18 @@ export const postLotSchema = z.object({
 export type PostLotSchema = z.infer<typeof postLotSchema>;
 
 
+export const postVehicleEntrySchema = z.object({
+  lotId: z.string().min(1, "Lot ID is required").max(50, "Lot ID must be at most 50 characters"),
+  plateId: z.string().min(1, "Plate ID is required").max(20, "Plate ID must be at most 20 characters"),
+  categoryId: z.uuid().min(1, "Category is required").max(50, "Category must be at most 50 characters"),
+  /* for now, category id is acceptable to not be validated against the lot's categories at the validation layer and rather at the db layer as MVP, 
+  but in future, I plan to preferably use redis to cache the lot's categories and validate against that at the validation layer, 
+  to avoid unnecessary db calls for validation */
+  
+});
+
+export type PostVehicleEntrySchema = z.infer<typeof postVehicleEntrySchema>;
+
 /*
 Sample request body for creating a parking lot:
 {

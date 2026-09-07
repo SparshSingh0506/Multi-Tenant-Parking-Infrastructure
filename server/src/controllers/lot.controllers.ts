@@ -4,7 +4,7 @@ import type { Context } from "hono";
 
 
 export const postLotController = async (c: Context) => {
-  const body: PostLotSchema = await c.req.json() as PostLotSchema;
+  const body = await c.req.json() as PostLotSchema;
 
   const data = await postLotService(body);
 
