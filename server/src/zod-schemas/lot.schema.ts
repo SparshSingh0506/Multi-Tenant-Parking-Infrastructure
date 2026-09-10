@@ -1,3 +1,4 @@
+import { gate } from "@/db/schemas/db.schema.js";
 import { z } from "zod";
 
 
@@ -30,7 +31,8 @@ export const postVehicleEntrySchema = z.object({
   lotId: z.string().min(1, "Lot ID is required").max(50, "Lot ID must be at most 50 characters"),
   plateId: z.string().min(1, "Plate ID is required").max(20, "Plate ID must be at most 20 characters"),
   categoryId: z.uuid().min(1, "Category is required").max(50, "Category must be at most 50 characters"),
-  /*to do - preferably implement redis to cache the lots' categories and validate them as enum at the validation layer instead of just string validation*/
+  entryGateId: z.string().min(1, "Gate ID is required").max(50, "Gate ID must be at most 50 characters") 
+  /*****TODO*****- preferably implement redis to cache the lots' categories and validate them as enum at the validation layer instead of just string validation*/
 });
 
 export type PostVehicleEntrySchema = z.infer<typeof postVehicleEntrySchema>;

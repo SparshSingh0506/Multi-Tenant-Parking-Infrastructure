@@ -1,16 +1,14 @@
-import { tr } from "zod/locales";
-
 export type gateType = "Entry" | "Exit";
 
 
-export interface Vehicle {
-  id: string, //nameplate as id
-}
+// export interface Vehicle {
+//   id: string, //nameplate as id
+// }
 
 export class Operator {
   constructor (
-    id: string,
-    name: string
+    public id: string,
+    public name: string
   ) {}
 }
 
@@ -29,32 +27,38 @@ export class Gate {
 
 export class Manager {
   constructor (
-    id: string,
-    name: string
+    public id: string,
+    public name: string
   ) {}
 }
 
+interface InitialTicketDetails {
+  lotId: string;
+  categoryId: string;
+  plateId: string;
+  entryGateId: string;
+  entryTime: string;
+}
+
+
 export class Ticket {
-  public exitTime?: string;
-  public exitGateId?: string;
-  public amountPaid?: number;
-  public isClosed: boolean = false;
+  isClosed: boolean = false;
+
+  constructor (public details: InitialTicketDetails) {}
+
+  exitTime?: string;
+  exitGateId?: string;
+  amountPaid?: number;
   
-  constructor (
-    public sessionId: string,
-    public vehicle: Vehicle,
-    public entryGateId: string,
-    public entryTime: string,
-  ) {}
-  
-  public close() {
+  private close() {
     this.isClosed = true;
   }
 
-  setExitDetails(exitTime: string, exitGateId: string) {
+  public setExitDetails(exitTime: string, exitGateId: string, amountPaid: number) {
     this.exitTime = exitTime;
     this.exitGateId = exitGateId;
-    
+    this.amountPaid = amountPaid;
+  
     this.close();
   }
 }

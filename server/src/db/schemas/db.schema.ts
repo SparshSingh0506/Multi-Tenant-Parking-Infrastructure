@@ -18,6 +18,13 @@ export const gate = table("gate", {
   parkingLotId: uuid().notNull().references(() => parkingLot.id, { onDelete: "cascade" })
 });
 
+// export const vehicle = table("vehicle", {
+//   id: text().primaryKey(), // using nameplate as the primary key
+//   //categoryId: uuid().notNull().references(() => vehicleCategory.id, { onDelete: "cascade" }),
+//   parkingLotId: uuid().notNull().references(() => parkingLot.id, { onDelete: "cascade" })
+// });
+// will probably add later
+
 export const vehicleCategory = table("vehicle_category", {
   id: uuid().defaultRandom().primaryKey(),
   parkingLotId: uuid().notNull().references(() => parkingLot.id, { onDelete: "cascade" }),
@@ -44,4 +51,4 @@ export const ticket = table("ticket", {
   isClosed: boolean().notNull().default(false),
   amountPaid: decimal({ precision: 10, scale: 2 }),
 });
-
+//*****TODO***** - reference the correct gate with composite foreign key (gateId + gateType) instead of just gateId. this will allow consistent validation of the gate type
