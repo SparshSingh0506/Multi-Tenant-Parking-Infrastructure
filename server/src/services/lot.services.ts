@@ -1,11 +1,24 @@
-import { createLotDetails } from "@/repository/lot.repo.js";
+import { createInitialLotDetails, createTicket, getStaticLotDetails } from "@/repository/lot.repo.js";
 import type { PostLotSchema, PostVehicleEntrySchema } from "@/zod-schemas/lot.schema.js";
 import { Ticket } from "@/models/lot.model.js";
 
 
+
 export const postLotService = async (data: PostLotSchema) => {
   try {
-    const result = await createLotDetails(data);
+    const result = await createInitialLotDetails(data);
+
+    return result;
+  }
+
+  catch (error) {
+    throw error;
+  }
+}
+
+export const getLotService = async (lotId: string) => {
+    try {
+    const result = await getStaticLotDetails(lotId);
 
     return result;
   }
@@ -16,15 +29,13 @@ export const postLotService = async (data: PostLotSchema) => {
 }
 
 export const postVehicleEntryService = async (data: PostVehicleEntrySchema) => {
-  const { lotId, plateId, categoryId, entryGateId } = data;
+  try {
+    const result = await createTicket(data);
 
-  const ticket = new Ticket({
-    lotId,
-    plateId,
-    categoryId,
-    entryGateId,
-    entryTime: new Date().toISOString()
-  });
+    return result;
+  }
 
-  
+  catch (error) {
+    throw error;
+  }
 }

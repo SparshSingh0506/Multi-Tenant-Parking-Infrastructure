@@ -1,4 +1,4 @@
-import { decimal, uuid, timestamp, boolean, pgEnum, text, snakeCase, integer } from "drizzle-orm/pg-core";
+import { decimal, uuid, timestamp, boolean, pgEnum, text, snakeCase, smallint } from "drizzle-orm/pg-core";
 
 
 const table = snakeCase.table;
@@ -15,7 +15,7 @@ export const gate = table("gate", {
   id: uuid().defaultRandom().primaryKey(),
   name: text().notNull(),
   type: gateTypeEnum().notNull(),
-  parkingLotId: uuid().notNull().references(() => parkingLot.id, { onDelete: "cascade" })
+  lotId: uuid().notNull().references(() => parkingLot.id, { onDelete: "cascade" })
 });
 
 // export const vehicle = table("vehicle", {
@@ -27,27 +27,27 @@ export const gate = table("gate", {
 
 export const vehicleCategory = table("vehicle_category", {
   id: uuid().defaultRandom().primaryKey(),
-  parkingLotId: uuid().notNull().references(() => parkingLot.id, { onDelete: "cascade" }),
-  category: text().notNull(),
+  lotId: uuid().notNull().references(() => parkingLot.id, { onDelete: "cascade" }),
+  name: text().notNull(),
   fare: decimal({ precision: 10, scale: 2 }).notNull(),
 });
 
-export const vehicleSlots = table("vehicle_slots", {
+export const slotsCategory = table("vehicle_slots", {
   id: uuid().defaultRandom().primaryKey(),
-  parkingLotId: uuid().notNull().references(() => parkingLot.id, { onDelete: "cascade" }),
+  lotId: uuid().notNull().references(() => parkingLot.id, { onDelete: "cascade" }),
   name: text().notNull(), // deliberate choice to not link to vehicle category, as parking capacities can be defined independently
-  capacity: integer().notNull(),
+  capacity: smallint().notNull(),
 });
 
 export const ticket = table("ticket", {
   id: uuid().defaultRandom().primaryKey(),
-  parkingLotId: uuid().notNull().references(() => parkingLot.id, { onDelete: "cascade" }),
-  vehiclePlateId: text().notNull(),
+  lotId: uuid().notNull().references(() => parkingLot.id, { onDelete: "cascade" }),
+  vehiclePlate: text().notNull(),
   vehicleCategoryId: uuid().notNull().references(() => vehicleCategory.id, { onDelete: "cascade" }),
-  entryTime: timestamp().notNull(),
   entryGateId: uuid().notNull().references(() => gate.id, { onDelete: "cascade" }),
-  exitTime: timestamp(),
+  entryTime: timestamp().notNull().defaultNow(),
   exitGateId: uuid().references(() => gate.id, { onDelete: "cascade" }),
+  exitTime: timestamp(),
   isClosed: boolean().notNull().default(false),
   amountPaid: decimal({ precision: 10, scale: 2 }),
 });

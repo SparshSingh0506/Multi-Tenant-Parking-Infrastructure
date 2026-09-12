@@ -1,4 +1,3 @@
-import { gate } from "@/db/schemas/db.schema.js";
 import { z } from "zod";
 
 
@@ -12,11 +11,11 @@ export const postLotSchema = z.object({
   ),
   vehicleCategories: z.array(
     z.object({
-      category: z.string().min(1, "Category is required").max(50, "Category must be at most 50 characters"),
+      name: z.string().min(1, "Category is required").max(50, "Category must be at most 50 characters"),
       fare: z.number().positive("Fare must be a positive number")
     })
   ),
-  vehicleSlots: z.array(
+  slotsCategories: z.array(
     z.object({
       name: z.string().min(1, "Slot name is required").max(50, "Slot name must be at most 50 characters"),
       capacity: z.number().int().nonnegative("Capacity must be a non-negative integer")
@@ -28,10 +27,11 @@ export type PostLotSchema = z.infer<typeof postLotSchema>;
 
 
 export const postVehicleEntrySchema = z.object({
-  lotId: z.string().min(1, "Lot ID is required").max(50, "Lot ID must be at most 50 characters"),
-  plateId: z.string().min(1, "Plate ID is required").max(20, "Plate ID must be at most 20 characters"),
-  categoryId: z.uuid().min(1, "Category is required").max(50, "Category must be at most 50 characters"),
-  entryGateId: z.string().min(1, "Gate ID is required").max(50, "Gate ID must be at most 50 characters") 
+  lotId: z.string().min(1, "Parking Lot Id is required").max(50, "Parking Lot Id must be at most 50 characters"),
+  vehiclePlate: z.string().min(1, "Vehicle Plate Id is required").max(20, "Vehicle Plate Id must be at most 20 characters"),
+  vehicleCategoryId: z.uuid().min(1, "Category is required").max(50, "Category must be at most 50 characters"),
+  slotCategoryId: z.string().min(1, "Slot category Id is required").max(50, "Slot category Id must be at most 50 characters"),
+  entryGateId: z.string().min(1, "Gate Id is required").max(50, "Gate Id must be at most 50 characters")
   /*****TODO*****- preferably implement redis to cache the lots' categories and validate them as enum at the validation layer instead of just string validation*/
 });
 
