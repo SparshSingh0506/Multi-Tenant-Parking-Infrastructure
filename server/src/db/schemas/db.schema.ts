@@ -42,13 +42,16 @@ export const slotsCategory = table("vehicle_slots", {
 export const ticket = table("ticket", {
   id: uuid().defaultRandom().primaryKey(),
   lotId: uuid().notNull().references(() => parkingLot.id, { onDelete: "cascade" }),
+
   vehiclePlate: text().notNull(),
   vehicleCategoryId: uuid().notNull().references(() => vehicleCategory.id, { onDelete: "cascade" }),
+
   entryGateId: uuid().notNull().references(() => gate.id, { onDelete: "cascade" }),
-  entryTime: timestamp().notNull().defaultNow(),
+  createdAt: timestamp().notNull().defaultNow(),
+
   exitGateId: uuid().references(() => gate.id, { onDelete: "cascade" }),
-  exitTime: timestamp(),
-  isClosed: boolean().notNull().default(false),
+  closedAt: timestamp(),
+  
   amountPaid: decimal({ precision: 10, scale: 2 }),
 });
 //*****TODO***** - reference the correct gate with composite foreign key (gateId + gateType) instead of just gateId. this will allow consistent validation of the gate type

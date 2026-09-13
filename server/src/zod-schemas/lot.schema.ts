@@ -22,8 +22,13 @@ export const postLotSchema = z.object({
     })
   )
 });
-
 export type PostLotSchema = z.infer<typeof postLotSchema>;
+
+
+export const getLotSchema = z.object({
+  lotId: z.uuid("Lot ID must be a valid UUID")
+});
+export type GetLotSchema = z.infer<typeof getLotSchema>;
 
 
 export const postVehicleEntrySchema = z.object({
@@ -34,7 +39,6 @@ export const postVehicleEntrySchema = z.object({
   entryGateId: z.string().min(1, "Gate Id is required").max(50, "Gate Id must be at most 50 characters")
   /*****TODO*****- preferably implement redis to cache the lots' categories and validate them as enum at the validation layer instead of just string validation*/
 });
-
 export type PostVehicleEntrySchema = z.infer<typeof postVehicleEntrySchema>;
 
 /* Example request body for creating a parking lot:
