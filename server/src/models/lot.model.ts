@@ -1,3 +1,6 @@
+// PROTOTYPE ONLY
+
+
 export type gateType = "Entry" | "Exit";
 
 

@@ -1,14 +1,14 @@
-import { getStaticLotDataService, postInitLotDataService, postVehicleEntryService } from "@/services/lot.services.js";
-import type { PostLotSchema, PostVehicleEntrySchema } from "@/zod-schemas/lot.schema.js";
+import { getStaticLotDataService, postInitLotDataService, postVehicleEntryService, postVehicleExitService } from "@/services/lot.services.js";
+import type { InitLotDataSchema, VehicleEntrySchema, VehicleExitSchema } from "@/zod-schemas/lot.schema.js";
 import type { Context } from "hono";
 
 
 export const postInitLotDataController = async (c: Context) => {
-  const body = await c.req.json() as PostLotSchema;
+  const body = await c.req.json() as InitLotDataSchema;
 
-  const data = await postInitLotDataService(body);
+  const initLotData = await postInitLotDataService(body);
 
-  return c.json({ data }, 201);
+  return c.json({ data: initLotData }, 201);
 }
 
 
@@ -17,16 +17,28 @@ export const getStaticLotDataController = async (c: Context) => {
 
   if (!lotId) throw new Error("Lot ID is required");
 
-  const data = await getStaticLotDataService(lotId);
+  const lotData = await getStaticLotDataService(lotId);
 
-  return c.json({ data }, 200);
+  return c.json({ data: lotData }, 200);
 }
 
 
-export const postVehicleEntryController = async (c: Context) => {
-  const body = await c.req.json() as PostVehicleEntrySchema;
+export const postVehicleEntryController = async (c: Context) => { // create ticket
+  const body = await c.req.json() as VehicleEntrySchema;
+  const lotId = c.req.param('lotId');
 
-  const ticket = await postVehicleEntryService(body);
+  if (!lotId) throw new Error("Lot ID is required");
 
-  return c.json({ data: ticket }, 201);
+  const initTicket = await postVehicleEntryService(lotId, body);
+
+  return c.json({ data: initTicket }, 201);
+}
+
+
+export const postVehicleExitController = async (c: Context) => { // complete ticket
+  const body = await c.req.json() as VehicleExitSchema;
+
+  const finalTicket = await postVehicleExitService(body);
+
+  return c.json({ data: finalTicket }, 200);
 }

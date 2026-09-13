@@ -1,9 +1,11 @@
 import { db } from "@/configs/db.config.js";
 import { eq } from "drizzle-orm";
-import type { PostLotSchema, PostVehicleEntrySchema } from "@/zod-schemas/lot.schema.js";
+import type { InitLotDataSchema, VehicleEntrySchema, VehicleExitSchema } from "@/zod-schemas/lot.schema.js";
 import { gate, parkingLot, vehicleCategory, slotsCategory as db_slotsCategories, ticket } from "@/db/schemas/db.schema.js";
+import type { InitTicket } from "@/interfaces/ticket.interfaces.js";
 
-export const createInitialLotDetails = async (data: PostLotSchema) => {
+
+export const createInitLotData = async (data: InitLotDataSchema) => {
   const { name, gates, vehicleCategories, slotsCategories } = data;
 
   const result = await db.transaction(async (tx) => {
@@ -81,11 +83,11 @@ export const getStaticLotDetails = async (lotId: string) => {
     vehicleCategories,
     slotsCategories
   };
-};
+}
 
 
-export const createTicket = async (data: PostVehicleEntrySchema) => {
-  const { lotId, vehiclePlate, vehicleCategoryId, slotCategoryId, entryGateId } = data;
+export const createTicket = async (data: InitTicket) => {
+  const { lotId, vehiclePlate, vehicleCategoryId, entryGateId } = data;
 
   const result = await db.transaction(async (tx) => {
 
@@ -93,7 +95,7 @@ export const createTicket = async (data: PostVehicleEntrySchema) => {
 
     const slotCapacity = {}; // only generate ticket if the lot has available capacity for the vehicle category
 
-    if (slotCapacity == 0) throw new Error("No available slots for the selected vehicle category.");
+    if (slotCapacity === 0) throw new Error("No available slots for the selected vehicle category");
 
     const ticketResult = await tx.insert(ticket).values({
       lotId,
@@ -107,3 +109,20 @@ export const createTicket = async (data: PostVehicleEntrySchema) => {
 
   return result;
 }
+
+
+export const completeTicket = async (data: VehicleExitSchema) => {
+  const { ticketId, exitGateId, amountPaid } = data;
+
+  const result = await db
+    .update(ticket).set({
+      exitGateId,
+      closedAt: new Date(),
+      amountPaid: amountPaid.toFixed(2),
+    })
+    .where(eq(ticket.id, ticketId)).returning();
+
+  return result[0];
+}
+
+// TODO: send actual data instead of the id's of the lot, vehicle category, and gate. 

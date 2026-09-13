@@ -51,7 +51,7 @@ export const ticket = table("ticket", {
 
   exitGateId: uuid().references(() => gate.id, { onDelete: "cascade" }),
   closedAt: timestamp(),
-  
+
   amountPaid: decimal({ precision: 10, scale: 2 }),
 });
-//*****TODO***** - reference the correct gate with composite foreign key (gateId + gateType) instead of just gateId. this will allow consistent validation of the gate type
+//TODO: reference the correct gate with composite foreign key (gateId + gateType) instead of just gateId. this will allow consistent validation of the gate type

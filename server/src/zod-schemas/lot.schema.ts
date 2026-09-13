@@ -1,7 +1,9 @@
+import { ticket } from "@/db/schemas/db.schema.js";
+import { exit } from "node:process";
 import { z } from "zod";
 
 
-export const postLotSchema = z.object({
+export const InitLotDataSchema = z.object({
   name: z.string().min(1, "Name is required" ).max(100, "Name must be at most 100 characters"),
   gates: z.array(
     z.object({
@@ -22,26 +24,8 @@ export const postLotSchema = z.object({
     })
   )
 });
-export type PostLotSchema = z.infer<typeof postLotSchema>;
-
-
-export const getLotSchema = z.object({
-  lotId: z.uuid("Lot ID must be a valid UUID")
-});
-export type GetLotSchema = z.infer<typeof getLotSchema>;
-
-
-export const postVehicleEntrySchema = z.object({
-  lotId: z.string().min(1, "Parking Lot Id is required").max(50, "Parking Lot Id must be at most 50 characters"),
-  vehiclePlate: z.string().min(1, "Vehicle Plate Id is required").max(20, "Vehicle Plate Id must be at most 20 characters"),
-  vehicleCategoryId: z.uuid().min(1, "Category is required").max(50, "Category must be at most 50 characters"),
-  slotCategoryId: z.string().min(1, "Slot category Id is required").max(50, "Slot category Id must be at most 50 characters"),
-  entryGateId: z.string().min(1, "Gate Id is required").max(50, "Gate Id must be at most 50 characters")
-  /*****TODO*****- preferably implement redis to cache the lots' categories and validate them as enum at the validation layer instead of just string validation*/
-});
-export type PostVehicleEntrySchema = z.infer<typeof postVehicleEntrySchema>;
-
-/* Example request body for creating a parking lot:
+export type InitLotDataSchema = z.infer<typeof InitLotDataSchema>;
+/* Example request body:
 {
   "name": "Downtown Parking Lot", 
   "gates": [
@@ -64,3 +48,27 @@ export type PostVehicleEntrySchema = z.infer<typeof postVehicleEntrySchema>;
   ]
 }
 */
+
+
+export const staticLotDetailsSchema = z.object({
+  lotId: z.uuid("Lot ID must be a valid UUID")
+});
+export type StaticLotDetailsSchema = z.infer<typeof staticLotDetailsSchema>;
+
+
+export const vehicleEntrySchema = z.object({
+  vehiclePlate: z.string().min(1, "Vehicle Plate Id is required").max(20, "Vehicle Plate Id must be at most 20 characters"),
+  vehicleCategoryId: z.uuid("Vehicle Category Id must be a valid UUID"),
+  entryGateId: z.uuid("Entry Gate Id must be a valid UUID")
+  //TODO: preferably implement redis to cache the lots' categories and validate them as enum at the validation layer instead of just string validation*/
+});
+export type VehicleEntrySchema = z.infer<typeof vehicleEntrySchema>;
+
+
+export const vehicleExitSchema = z.object({
+  ticketId: z.uuid("Ticket Id must be a valid UUID"), // lot id inferred from ticket id
+  exitGateId: z.uuid("Exit Gate Id must be a valid UUID"),
+  amountPaid: z.number().positive("Amount Paid must be a positive number")
+});
+export type VehicleExitSchema = z.infer<typeof vehicleExitSchema>;
+  
