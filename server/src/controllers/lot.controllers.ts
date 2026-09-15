@@ -15,7 +15,7 @@ export const postInitLotDataController = async (c: Context) => {
 export const getStaticLotDataController = async (c: Context) => {
   const lotId = c.req.param('lotId');
 
-  const lotData = await getStaticLotDataService(lotId!); // lotId is guaranteed to be present due to zod validation in the route
+  const lotData = await getStaticLotDataService(lotId!); 
 
   return c.json({ data: lotData }, 200);
 }

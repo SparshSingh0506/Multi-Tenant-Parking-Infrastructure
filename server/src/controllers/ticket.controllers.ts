@@ -30,5 +30,5 @@ export const patchCompleteTicketController = async (c: Context) => {
 
   const finalTicket = await patchCompleteTicketService(data);
 
-  return c.json({ data: "test ok"}, 200);
+  return c.json({ data: finalTicket }, 200);
 }

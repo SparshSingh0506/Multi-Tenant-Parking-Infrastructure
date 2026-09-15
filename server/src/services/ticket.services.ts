@@ -3,7 +3,6 @@ import { completeTicket, createTicket, getFinalTicket } from "@/repository/ticke
 
 
 export const postInitTicketService = async (data: InitTicket) => {
-  //TODO: Only return ticket id and not the entire ticket data | 
   try {
     const ticket = await createTicket(data);
 
