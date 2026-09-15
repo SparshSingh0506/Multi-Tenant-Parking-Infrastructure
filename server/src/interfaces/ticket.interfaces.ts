@@ -4,3 +4,9 @@ export interface InitTicket {
   vehicleCategoryId: string,
   entryGateId: string
 }
+
+export interface CloseTicket {
+  ticketId: string,
+  exitGateId: string,
+  amountPaid: number
+}

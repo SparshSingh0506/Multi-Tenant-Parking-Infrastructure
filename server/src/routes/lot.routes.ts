@@ -1,15 +1,21 @@
 import { Hono } from "hono";
 import { zValidator } from "@hono/zod-validator";
-import { getStaticLotDataController, postInitLotDataController, postVehicleEntryController, postVehicleExitController } from "@/controllers/lot.controllers.js";
-import { staticLotDetailsSchema, InitLotDataSchema, vehicleEntrySchema, vehicleExitSchema } from "@/zod-schemas/lot.schema.js";
+
+import { lotIdParamSchema, initLotDataSchema } from "@/zod-schemas/lot.schema.js";
+import { initTicketSchema } from "@/zod-schemas/ticket.schema.js";
+
+import { getStaticLotDataController, postInitLotDataController} from "@/controllers/lot.controllers.js";
+import { postInitTicketController } from "@/controllers/ticket.controllers.js";
+
 
 const router = new Hono();
 
-router.post('/', zValidator('json', InitLotDataSchema), postInitLotDataController);
-router.get('/:lotId', zValidator('param', staticLotDetailsSchema), getStaticLotDataController);
-router.post('/:lotId/entry', zValidator('json', vehicleEntrySchema), postVehicleEntryController);
-router.post('/:lotId/exit', zValidator('json', vehicleExitSchema), postVehicleExitController); //TODO: make it a PATCH request
+router.post('/', zValidator('json', initLotDataSchema), postInitLotDataController);
+router.get('/:lotId', zValidator('param', lotIdParamSchema), getStaticLotDataController);
+router.post('/:lotId/tickets', zValidator('json', initTicketSchema), postInitTicketController);
 // TODO: validate for request param also above
 
 
 export default router;
+
+// TODO: central validation middleware for request params and request body using zod schemas
