@@ -1,5 +1,5 @@
 import { db } from "@/configs/db.config.js";
-import { eq } from "drizzle-orm";
+import { and, eq, lt } from "drizzle-orm";
 import type { CreateLotSchema } from "@/zod-schemas/lot.schema.js";
 import { gate, parkingLot, vehicleCategory, slotsCategory as db_slotsCategories, user, joinToken } from "@/db/schemas/index.schema.js";
 
@@ -58,6 +58,7 @@ export const getLotIdFromJoinToken = async (token: string) => {
   return result[0].lotId;
 }
 
+
 export const getStaticLotDetails = async (lotId: string) => {
   const lotResult = await db
     .select({
@@ -110,4 +111,23 @@ export const getLotOperators = async (lotId: string) => {
   }).from(user).where(eq(user.lotId, lotId));
 
   return result;
+}
+
+
+export const validateJoinToken = async (token: string) => {
+  const result = await db
+    .select({ token: joinToken.token })
+    .from(joinToken)
+    .where(and(eq(joinToken.token, token), lt(joinToken.expiresAt, new Date())))
+    .limit(1);
+
+  return result.length > 0;
+}
+
+
+export const mapJoinTokenToLot = async (lotId: string, token: string) => {
+  await db.insert(joinToken).values({
+    lotId,
+    token
+  });
 }

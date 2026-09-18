@@ -5,10 +5,6 @@ import { completeTicket, createTicket, getFinalTicket } from "@/repository/ticke
 export const postInitTicketService = async (data: InitTicket) => {
   const ticket = await createTicket(data);
 
-  if (!ticket) {
-    throw new Error("Failed to create ticket");
-  }
-
   return ticket.id;
 };
 

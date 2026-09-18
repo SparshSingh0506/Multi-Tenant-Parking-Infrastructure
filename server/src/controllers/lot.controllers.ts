@@ -23,6 +23,10 @@ export const postJoinLotController = async (c: Context) => {
   return c.status(204);
 }
 
+export const getJoinTokenController = async (c: Context) => {
+  // TODO: controller to retrieve the join token for a lot
+}
+
 
 export const getStaticLotDataController = async (c: Context) => {
   const lotId = c.req.param('lotId')!;
