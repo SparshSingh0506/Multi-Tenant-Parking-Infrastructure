@@ -3,28 +3,20 @@ import { completeTicket, createTicket, getFinalTicket } from "@/repository/ticke
 
 
 export const postInitTicketService = async (data: InitTicket) => {
-  try {
-    const ticket = await createTicket(data);
+  const ticket = await createTicket(data);
 
-    return ticket.id;
+  if (!ticket) {
+    throw new Error("Failed to create ticket");
   }
 
-  catch (error) {
-    throw error;
-  }
-}
+  return ticket.id;
+};
 
 
 export const patchCompleteTicketService = async (data: CloseTicket) => {
-  try {
-    await completeTicket(data);
+  await completeTicket(data);
 
-    const ticket = await getFinalTicket(data.ticketId);
+  const ticket = await getFinalTicket(data.ticketId);
 
-    return ticket;
-  }
-
-  catch (error) {
-    throw error;
-  }
-}
+  return ticket;
+};

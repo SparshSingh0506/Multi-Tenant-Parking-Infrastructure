@@ -1,10 +1,10 @@
 import { db } from "@/configs/db.config.js";
 import { eq } from "drizzle-orm";
-import type { InitLotDataSchema } from "@/zod-schemas/lot.schema.js";
-import { gate, parkingLot, vehicleCategory, slotsCategory as db_slotsCategories } from "@/db/schemas/db.schema.js";
+import type { CreateLotSchema } from "@/zod-schemas/lot.schema.js";
+import { gate, parkingLot, vehicleCategory, slotsCategory as db_slotsCategories, user, joinToken } from "@/db/schemas/index.schema.js";
 
 
-export const createInitLotData = async (data: InitLotDataSchema) => {
+export const createInitLotData = async (data: CreateLotSchema) => {
   const { name, gates, vehicleCategories, slotsCategories } = data;
 
   const result = await db.transaction(async (tx) => {
@@ -37,11 +37,26 @@ export const createInitLotData = async (data: InitLotDataSchema) => {
       vehicleCategories: categoryResults,
       slotsCategories: slotsCategoriesResults,
     };
-  })
+  });
 
   return result;
 }
 
+
+export const getLotIdFromJoinToken = async (token: string) => {
+  const result = await db
+  .select({
+    lotId: joinToken.lotId,
+  })
+  .from(joinToken)
+  .where(eq(joinToken.token, token));
+
+  if (result.length === 0) {
+    throw new Error("No lot found for the given join token");
+  }
+
+  return result[0].lotId;
+}
 
 export const getStaticLotDetails = async (lotId: string) => {
   const lotResult = await db
@@ -84,3 +99,15 @@ export const getStaticLotDetails = async (lotId: string) => {
   };
 }
 
+
+export const getLotOperators = async (lotId: string) => {
+  const result = await db.select({
+    id: user.id,
+    name: user.name,
+    email: user.email,
+    image: user.image,
+    joinedAt: user.joinedAt,
+  }).from(user).where(eq(user.lotId, lotId));
+
+  return result;
+}

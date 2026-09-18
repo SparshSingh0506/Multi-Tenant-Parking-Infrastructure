@@ -1,9 +1,11 @@
 import { defineRelations } from "drizzle-orm";
-import { pgTable, text, timestamp, boolean, index, type AnyPgColumn, uuid, snakeCase } from "drizzle-orm/pg-core";
+import { text, timestamp, boolean, index, type AnyPgColumn, uuid, snakeCase, pgEnum } from "drizzle-orm/pg-core";
 
 import { parkingLot } from "./db.schema.js";
 
 const table = snakeCase.table;
+
+export const userTypeEnum = pgEnum("user_type", ["Manager", "Operator"]);
 
 export const user = table("user", {
   id: text().primaryKey(),
@@ -18,8 +20,10 @@ export const user = table("user", {
     .notNull(),
 
   // additional fields:
-  managerId: text().references((): AnyPgColumn => user.id, { onDelete: "set null" }), // null: user is manager, not null: user is operator and this field references the manager's id
-  parkingLotId: uuid().references((): AnyPgColumn => parkingLot.id, { onDelete: "cascade" })
+  //managerId: text().references((): AnyPgColumn => user.id, { onDelete: "set null" }), // null: user is manager, not null: user is operator and this field references the manager's id
+  role: userTypeEnum(),
+  lotId: uuid().references((): AnyPgColumn => parkingLot.id, { onDelete: "cascade" }),
+  joinedAt: timestamp("joined_at").defaultNow().notNull(),
 });
 
 export const session = table("session", {

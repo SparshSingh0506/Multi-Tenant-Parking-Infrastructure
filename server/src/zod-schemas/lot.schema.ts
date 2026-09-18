@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 
-export const initLotDataSchema = z.object({
+export const createLotSchema = z.object({
   name: z.string().min(1, "Name is required" ).max(100, "Name must be at most 100 characters"),
   gates: z.array(
     z.object({
@@ -22,7 +22,7 @@ export const initLotDataSchema = z.object({
     })
   )
 });
-export type InitLotDataSchema = z.infer<typeof initLotDataSchema>;
+export type CreateLotSchema = z.infer<typeof createLotSchema>;
 /* Example request body:
 {
   "name": "Downtown Parking Lot", 
@@ -46,6 +46,12 @@ export type InitLotDataSchema = z.infer<typeof initLotDataSchema>;
   ]
 }
 */
+
+
+export const joinLotSchema = z.object({
+  joinToken: z.string().min(1, "Token is required").max(10, "Token must be at most 10 characters")
+});
+export type JoinLotSchema = z.infer<typeof joinLotSchema>;
 
 
 export const lotIdParamSchema = z.object({

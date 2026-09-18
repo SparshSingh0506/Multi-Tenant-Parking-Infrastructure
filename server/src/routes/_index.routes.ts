@@ -9,10 +9,11 @@ import ticketRouter from "./ticket.routes.js";
 export const index = new Hono();
 
 index.route('/auth', authRouter); // /api/v1/auth/*
-index.route('/users', userRouter);
+//index.route('/users', userRouter);
 index.route('/lots', lotRouter);
 index.route('/tickets', ticketRouter);
-index.route('/dashboards', dashboardRouter);
+//index.route('/dashboards', dashboardRouter);
 
-
-
+// TODO: add auth middleware to all routes
+// TODO: central validation middleware for request params and request body
+// TODO: global error handler

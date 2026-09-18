@@ -24,16 +24,21 @@ export const auth = betterAuth({
 
   user: {
     additionalFields: {
-      managerId: {
+      role: {
         type: "string",
         required: false,
         input: false
       },
-      parkingLotId: {
+      lotId: {
         type: "string",
         required: false,
         input: false
       },
+      joinedAt: {
+        type: "date",
+        required: false,
+        input: false
+      }
     },
   }, 
 });

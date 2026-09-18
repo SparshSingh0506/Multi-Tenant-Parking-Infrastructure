@@ -1,4 +1,4 @@
-import { decimal, uuid, timestamp, boolean, pgEnum, text, snakeCase, smallint } from "drizzle-orm/pg-core";
+import { decimal, uuid, timestamp,pgEnum, text, snakeCase, smallint } from "drizzle-orm/pg-core";
 
 
 const table = snakeCase.table;
@@ -7,6 +7,13 @@ const table = snakeCase.table;
 export const parkingLot = table("parking_lot", {
   id: uuid().defaultRandom().primaryKey(),
   name: text().notNull(),
+});
+
+export const joinToken = table("join_token", {
+  lotId: uuid().primaryKey().references((): any => parkingLot.id, { onDelete: "cascade" }),
+  token: text().notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  expiresAt: timestamp("expires_at").notNull(),
 });
 
 export const gateTypeEnum = pgEnum("gate_type", ["Entry", "Exit"]);
@@ -32,7 +39,7 @@ export const vehicleCategory = table("vehicle_category", {
   fare: decimal({ precision: 10, scale: 2 }).notNull(),
 });
 
-export const slotsCategory = table("vehicle_slots", {
+export const slotsCategory = table("slots_category", {
   id: uuid().defaultRandom().primaryKey(),
   lotId: uuid().notNull().references(() => parkingLot.id, { onDelete: "cascade" }),
   name: text().notNull(), // deliberate choice to not link to vehicle category, as parking capacities can be defined independently
@@ -55,3 +62,4 @@ export const ticket = table("ticket", {
   amountPaid: decimal({ precision: 10, scale: 2 }),
 });
 //TODO: reference the correct gate with composite foreign key (gateId + gateType) instead of just gateId. this will allow consistent validation of the gate type
+//TODO: change non url primary keys from uuid to int to save space and improve performance

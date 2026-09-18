@@ -1,8 +1,6 @@
-import type { ManagerRegister } from "@/zod-schemas/auth.schema.js";
-
 import { env } from "../configs/env.config.js";
 
-export const managerRegisterService = async (manager: ManagerRegister) => {
+export const managerRegisterService = async () => {
   return {}
 }
 
