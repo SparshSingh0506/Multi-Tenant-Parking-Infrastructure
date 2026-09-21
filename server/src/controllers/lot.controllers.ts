@@ -1,4 +1,4 @@
-import { getLotOperatorsService, getStaticLotDataService, postCreateLotService, postJoinLotService } from "@/services/lot.services.js";
+import { getJoinTokenService, getLotOperatorsService, getStaticLotDataService, postCreateLotService, postJoinLotService } from "@/services/lot.services.js";
 import type { CreateLotSchema, JoinLotSchema } from "@/zod-schemas/lot.schema.js";
 import type { Context } from "hono";
 
@@ -20,11 +20,17 @@ export const postJoinLotController = async (c: Context) => {
 
   await postJoinLotService(userId, body.joinToken);
 
-  return c.status(204);
+  return c.status(204); 
 }
+
 
 export const getJoinTokenController = async (c: Context) => {
   // TODO: controller to retrieve the join token for a lot
+  const lotId = c.req.param('lotId')!;
+
+  const joinToken = await getJoinTokenService(lotId);
+
+  return c.json({ data: joinToken }, 200);
 }
 
 

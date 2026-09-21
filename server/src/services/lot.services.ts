@@ -1,13 +1,13 @@
-import { createInitLotData, getLotIdFromJoinToken, getLotOperators, getStaticLotDetails, mapJoinTokenToLot, validateJoinToken } from "@/repository/lot.repo.js";
+import { createInitLotData, getJoinTokenFromLotId, getLotIdFromJoinToken, getLotOperators, getStaticLotDetails, mapJoinTokenToLot, validateJoinToken } from "@/repository/lot.repo.js";
 import { setUserLotIdAndRole} from "@/repository/user.repo.js";
 import type { CreateLotSchema } from "@/zod-schemas/lot.schema.js";
 
 
 const generateJoinToken = (lotId: string) => {
+  // lot id will be used as seed to generate a unique token for the lot
   return "TEST-TOKEN";
   // TODO: Implement nanoid to generate a unique token
-};
-
+}
 export const postCreateLotService = async (userId: string, data: CreateLotSchema) => {
   const lotData = await createInitLotData(data);
 
@@ -23,7 +23,7 @@ export const postCreateLotService = async (userId: string, data: CreateLotSchema
     lotId,
     joinToken
   };
-};
+}
 
 
 export const postJoinLotService = async (userId: string, joinToken: string) => {
@@ -35,18 +35,23 @@ export const postJoinLotService = async (userId: string, joinToken: string) => {
   }
 
   await setUserLotIdAndRole(userId, lotId, "Operator");
-  //TODO: Maybe implement message queue to notify manager of join request and also let manager set how many operators can join the lot
-};
+  //TODO: [Provision] Maybe implement message queue to notify manager of join request and also let manager set how many operators can join the lot
+}
+
+
+export const getJoinTokenService = async (lotId: string) => {
+  return await getJoinTokenFromLotId(lotId);
+}
 
 
 export const getStaticLotDataService = async (lotId: string) => {
   return await getStaticLotDetails(lotId);
-};
+}
 
 
 export const getLotOperatorsService = async (lotId: string) => {
   return await getLotOperators(lotId);
-};
+}
 
 
 

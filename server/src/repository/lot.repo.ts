@@ -52,10 +52,26 @@ export const getLotIdFromJoinToken = async (token: string) => {
   .where(eq(joinToken.token, token));
 
   if (result.length === 0) {
-    throw new Error("No lot found for the given join token");
+    throw new Error("No lot found");
   }
 
   return result[0].lotId;
+}
+
+
+export const getJoinTokenFromLotId = async (lotId: string) => {
+  const result = await db
+    .select({
+      token: joinToken.token,
+    })
+    .from(joinToken)
+    .where(eq(joinToken.lotId, lotId));
+
+  if (result.length === 0) {
+    throw new Error("No join token found");
+  }
+
+  return result[0].token;
 }
 
 

@@ -4,7 +4,7 @@ import { zValidator } from "@hono/zod-validator";
 import { lotIdParamSchema, createLotSchema, joinLotSchema } from "@/zod-schemas/lot.schema.js";
 import { initTicketSchema } from "@/zod-schemas/ticket.schema.js";
 
-import { getStaticLotDataController, postCreateLotController, postJoinLotController} from "@/controllers/lot.controllers.js";
+import { getJoinTokenController, getStaticLotDataController, postCreateLotController, postJoinLotController} from "@/controllers/lot.controllers.js";
 import { postInitTicketController } from "@/controllers/ticket.controllers.js";
 
 
@@ -12,16 +12,16 @@ const router = new Hono();
 
 router.post('/create', zValidator('json', createLotSchema), postCreateLotController);
 router.post('/join', zValidator('json', joinLotSchema), postJoinLotController);
+router.get('/:lotId/join-token', zValidator('param', lotIdParamSchema), getJoinTokenController);
 
-router.get('/:lotId', zValidator('param', lotIdParamSchema), getStaticLotDataController);
+router.get('/:lotId/static-data', zValidator('param', lotIdParamSchema), getStaticLotDataController);
 router.post('/:lotId/tickets', zValidator('param', lotIdParamSchema), zValidator('json', initTicketSchema), postInitTicketController);
 
-router.get('/:lotId/operators', zValidator('param', lotIdParamSchema), );
+//router.get('/:lotId/operators', zValidator('param', lotIdParamSchema), );
 
 export default router;
 
-/*
-Flow of joining a parking lot as an operator:
+/* Flow of joining a parking lot as an operator:
 Manager
   │
   │ creates parking lot
