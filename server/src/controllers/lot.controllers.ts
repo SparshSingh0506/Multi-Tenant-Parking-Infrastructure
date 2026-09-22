@@ -25,7 +25,6 @@ export const postJoinLotController = async (c: Context) => {
 
 
 export const getJoinTokenController = async (c: Context) => {
-  // TODO: controller to retrieve the join token for a lot
   const lotId = c.req.param('lotId')!;
 
   const joinToken = await getJoinTokenService(lotId);

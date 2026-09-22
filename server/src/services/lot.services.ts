@@ -1,13 +1,18 @@
-import { createInitLotData, getJoinTokenFromLotId, getLotIdFromJoinToken, getLotOperators, getStaticLotDetails, mapJoinTokenToLot, validateJoinToken } from "@/repository/lot.repo.js";
-import { setUserLotIdAndRole} from "@/repository/user.repo.js";
+import {
+  createInitLotData,
+  getJoinTokenFromLotId,
+  getLotIdFromJoinToken,
+  getLotOperators,
+  getStaticLotDetails,
+  mapJoinTokenToLot,
+  validateJoinToken
+} from "@/repository/lot.repo.js";
+
+import { setUserLotIdAndRole } from "@/repository/user.repo.js";
+import { generateJoinToken } from "@/utils/join-token.utils.js";
 import type { CreateLotSchema } from "@/zod-schemas/lot.schema.js";
 
 
-const generateJoinToken = (lotId: string) => {
-  // lot id will be used as seed to generate a unique token for the lot
-  return "TEST-TOKEN";
-  // TODO: Implement nanoid to generate a unique token
-}
 export const postCreateLotService = async (userId: string, data: CreateLotSchema) => {
   const lotData = await createInitLotData(data);
 
@@ -15,7 +20,7 @@ export const postCreateLotService = async (userId: string, data: CreateLotSchema
 
   await setUserLotIdAndRole(userId, lotId, "Manager");
 
-  const joinToken = generateJoinToken(lotId);
+  const joinToken = generateJoinToken();
 
   await mapJoinTokenToLot(lotId, joinToken);
 
@@ -30,7 +35,7 @@ export const postJoinLotService = async (userId: string, joinToken: string) => {
   const lotId = await getLotIdFromJoinToken(joinToken);
 
   //TODO: first verify the join token is mapped to a lot and not expired 
-  if(!(await validateJoinToken(joinToken))) {
+  if (!(await validateJoinToken(joinToken))) {
     throw new Error("Invalid or expired join token");
   }
 
