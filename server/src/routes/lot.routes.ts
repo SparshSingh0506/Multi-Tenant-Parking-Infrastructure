@@ -11,10 +11,11 @@ import { postInitTicketController } from "@/controllers/ticket.controllers.js";
 const router = new Hono();
 
 router.post('/create', zValidator('json', createLotSchema), postCreateLotController);
-router.post('/join', zValidator('json', joinLotSchema), postJoinLotController);
+router.get('/:lotId/static-data', zValidator('param', lotIdParamSchema), getStaticLotDataController);
 router.get('/:lotId/join-token', zValidator('param', lotIdParamSchema), getJoinTokenController);
 
-router.get('/:lotId/static-data', zValidator('param', lotIdParamSchema), getStaticLotDataController);
+router.post('/join', zValidator('json', joinLotSchema), postJoinLotController); // yet to test 
+
 router.post('/:lotId/tickets', zValidator('param', lotIdParamSchema), zValidator('json', initTicketSchema), postInitTicketController);
 
 //router.get('/:lotId/operators', zValidator('param', lotIdParamSchema), );

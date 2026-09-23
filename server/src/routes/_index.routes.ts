@@ -1,8 +1,8 @@
 import { Hono } from "hono";
 
 import authRouter from "./auth.routes.js";
-import userRouter from "./user.routes.js";
-import dashboardRouter from "./dashboard.routes.js";
+//import userRouter from "./user.routes.js";
+//import dashboardRouter from "./dashboard.routes.js";
 import lotRouter from "./lot.routes.js";
 import ticketRouter from "./ticket.routes.js";
 

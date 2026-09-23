@@ -4,7 +4,6 @@ import { sql } from "drizzle-orm";
 
 const table = snakeCase.table;
 
-
 export const parkingLot = table("parking_lot", {
   id: uuid().defaultRandom().primaryKey(),
   name: text().notNull(),
@@ -15,8 +14,9 @@ export const joinToken = table("join_token", {
   token: text().notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   expiresAt: timestamp("expires_at").default(sql`NOW() + INTERVAL '7 DAYS'`).notNull() 
+  
   // default expiration of 7 days but, TODO: user flexible to set it to any value
-  //TODO: Maybe a trigger to automatically delete expired tokens from the table
+  //TODO: a db trigger to automatically delete expired tokens from the table
 });
 
 export const gateTypeEnum = pgEnum("gate_type", ["Entry", "Exit"]);

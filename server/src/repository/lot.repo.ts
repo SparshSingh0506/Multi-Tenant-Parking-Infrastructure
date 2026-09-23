@@ -43,38 +43,6 @@ export const createInitLotData = async (data: CreateLotSchema) => {
 }
 
 
-export const getLotIdFromJoinToken = async (token: string) => {
-  const result = await db
-  .select({
-    lotId: joinToken.lotId,
-  })
-  .from(joinToken)
-  .where(eq(joinToken.token, token));
-
-  if (result.length === 0) {
-    throw new Error("No lot found");
-  }
-
-  return result[0].lotId;
-}
-
-
-export const getJoinTokenFromLotId = async (lotId: string) => {
-  const result = await db
-    .select({
-      token: joinToken.token,
-    })
-    .from(joinToken)
-    .where(eq(joinToken.lotId, lotId));
-
-  if (result.length === 0) {
-    throw new Error("No join token found");
-  }
-
-  return result[0].token;
-}
-
-
 export const getStaticLotDetails = async (lotId: string) => {
   const lotResult = await db
     .select({
@@ -117,16 +85,28 @@ export const getStaticLotDetails = async (lotId: string) => {
 }
 
 
-export const getLotOperators = async (lotId: string) => {
-  const result = await db.select({
-    id: user.id,
-    name: user.name,
-    email: user.email,
-    image: user.image,
-    joinedAt: user.joinedAt,
-  }).from(user).where(eq(user.lotId, lotId));
+export const getLotIdFromJoinToken = async (token: string) => {
+  const result = await db
+  .select({
+    lotId: joinToken.lotId,
+  })
+  .from(joinToken)
+  .where(eq(joinToken.token, token));
 
-  return result;
+  return result[0]?.lotId ?? null;
+}
+
+
+export const getJoinTokenFromLotId = async (lotId: string) => {
+  const result = await db
+    .select({
+      token: joinToken.token,
+    })
+    .from(joinToken)
+    .where(eq(joinToken.lotId, lotId));
+
+
+  return result[0]?.token ?? null;
 }
 
 
@@ -146,4 +126,17 @@ export const mapJoinTokenToLot = async (lotId: string, token: string) => {
     lotId,
     token
   });
+}
+
+
+export const getLotOperators = async (lotId: string) => {
+  const result = await db.select({
+    id: user.id,
+    name: user.name,
+    email: user.email,
+    image: user.image,
+    joinedAt: user.joinedAt,
+  }).from(user).where(eq(user.lotId, lotId));
+
+  return result;
 }

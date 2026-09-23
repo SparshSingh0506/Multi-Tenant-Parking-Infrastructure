@@ -32,14 +32,14 @@ export const postCreateLotService = async (userId: string, data: CreateLotSchema
 
 
 export const postJoinLotService = async (userId: string, joinToken: string) => {
-  const lotId = await getLotIdFromJoinToken(joinToken);
-
-  //TODO: first verify the join token is mapped to a lot and not expired 
   if (!(await validateJoinToken(joinToken))) {
     throw new Error("Invalid or expired join token");
   }
 
+  const lotId = await getLotIdFromJoinToken(joinToken); // guaranteed to be non-null because of the previous validation check
+
   await setUserLotIdAndRole(userId, lotId, "Operator");
+  
   //TODO: [Provision] Maybe implement message queue to notify manager of join request and also let manager set how many operators can join the lot
 }
 

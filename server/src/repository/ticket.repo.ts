@@ -66,7 +66,7 @@ export const getFinalTicket = async (ticketId: string) => {
     exitGate: exitGate.name,
 
     closedAt: ticket.closedAt,
-    amountPaid: ticket.amountPaid, // TODO: Maybe not needed for MVP, remove
+    amountPaid: ticket.amountPaid, // TODO: Might not be needed for MVP
   })
   .from(ticket)
   .innerJoin(parkingLot, eq(ticket.lotId, parkingLot.id))

@@ -30,15 +30,19 @@ export type CreateLotSchema = z.infer<typeof createLotSchema>;
     {
       "name": "Main Entrance",
       "type": "Entry"
+    },
+    {
+      "name": "Main Exit",
+      "type": "Exit"
     }
   ],
   "vehicleCategories": [
     {
-      "category": "Car",
+      "name": "Car",
       "fare": 5.0
     }
   ],
-  "vehicleSlots": [
+  "slotsCategories": [
     {
       "name": "Car",
       "capacity": 50

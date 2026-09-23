@@ -2,6 +2,7 @@ import { getJoinTokenService, getLotOperatorsService, getStaticLotDataService, p
 import type { CreateLotSchema, JoinLotSchema } from "@/zod-schemas/lot.schema.js";
 import type { Context } from "hono";
 
+
 const DUMMY_USER_ID = "USER"; //TODO: replace with actual user ID from auth middleware
 
 export const postCreateLotController = async (c: Context) => {
@@ -10,17 +11,21 @@ export const postCreateLotController = async (c: Context) => {
 
   const { lotId, joinToken } = await postCreateLotService(userId, body);
 
-  return c.json({ data: lotId, joinToken }, 201);
+  return c.json({
+    data: {
+      lotId, 
+      joinToken
+    }
+  }, 201);
 }
 
 
-export const postJoinLotController = async (c: Context) => {
-  const body = await c.req.json() as JoinLotSchema;
-  const userId = DUMMY_USER_ID;
+export const getStaticLotDataController = async (c: Context) => {
+  const lotId = c.req.param('lotId')!;
 
-  await postJoinLotService(userId, body.joinToken);
+  const lotData = await getStaticLotDataService(lotId);
 
-  return c.status(204); 
+  return c.json({ data: lotData }, 200);
 }
 
 
@@ -33,13 +38,16 @@ export const getJoinTokenController = async (c: Context) => {
 }
 
 
-export const getStaticLotDataController = async (c: Context) => {
-  const lotId = c.req.param('lotId')!;
+export const postJoinLotController = async (c: Context) => {
+  const body = await c.req.json() as JoinLotSchema;
+  const userId = DUMMY_USER_ID;
 
-  const lotData = await getStaticLotDataService(lotId);
+  await postJoinLotService(userId, body.joinToken);
 
-  return c.json({ data: lotData }, 200);
+  return c.status(204);
 }
+
+
 
 
 export const getLotOperatorsController = async (c: Context) => {
