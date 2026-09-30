@@ -1,11 +1,11 @@
 import { db } from "@/configs/db.config.js";
-import { and, eq, lt } from "drizzle-orm";
+import { and, eq, gt } from "drizzle-orm";
 import type { CreateLotSchema } from "@/zod-schemas/lot.schema.js";
-import { gate, parkingLot, vehicleCategory, slotsCategory as db_slotsCategories, user, joinToken } from "@/db/schemas/index.schema.js";
+import { gate, parkingLot, vehicleCategory, slotCategory, vehicleSlotCategory, user, joinToken } from "@/db/schemas/index.schema.js";
 
 
 export const createInitLotData = async (data: CreateLotSchema) => {
-  const { name, gates, vehicleCategories, slotsCategories } = data;
+  const { name, gates, vehicleCategories, slotsCategories, vehicleSlotCategories } = data;
 
   const result = await db.transaction(async (tx) => {
     const [{ id }] = await tx.insert(parkingLot).values({
@@ -18,24 +18,40 @@ export const createInitLotData = async (data: CreateLotSchema) => {
       lotId: id
     }))).returning();
 
-    const categoryResults = await tx.insert(vehicleCategory).values(vehicleCategories.map(category => ({
-      name: category.name,
+    const vehicleCategoryResults = await tx.insert(vehicleCategory).values(vehicleCategories.map(category => ({
+      category: category.category,
       fare: category.fare.toFixed(2),
       lotId: id
     }))).returning();
 
-    const slotsCategoriesResults = await tx.insert(db_slotsCategories).values(slotsCategories.map(slot => ({
-      name: slot.name,
+    const vehicleCategoryIds = new Map(
+      vehicleCategoryResults.map(category => [category.category, category.id])
+    );
+
+    const slotCategoryResults = await tx.insert(slotCategory).values(slotsCategories.map(slot => ({
+      category: slot.category,
       capacity: slot.capacity,
       lotId: id
     }))).returning();
+
+    const slotCategoryIds = new Map(
+      slotCategoryResults.map(category => [category.category, category.id])
+    );
+
+    const vehicleSlotCategoryResults = await tx.insert(vehicleSlotCategory).values(
+      vehicleSlotCategories.map(mapping => ({
+        vehicleCategoryId: vehicleCategoryIds.get(mapping.vehicleCategory)!,
+        slotCategoryId: slotCategoryIds.get(mapping.slotCategory)!
+      }))
+    ).returning();
 
     return {
       id,
       name,
       gates: gateResults,
-      vehicleCategories: categoryResults,
-      slotsCategories: slotsCategoriesResults,
+      vehicleCategories: vehicleCategoryResults,
+      slotsCategories: slotCategoryResults,
+      vehicleSlotCategories: vehicleSlotCategoryResults,
     };
   });
 
@@ -62,25 +78,36 @@ export const getStaticLotDetails = async (lotId: string) => {
   const vehicleCategories = await db
     .select({
       id: vehicleCategory.id,
-      name: vehicleCategory.name,
+      category: vehicleCategory.category,
       fare: vehicleCategory.fare
     })
     .from(vehicleCategory).where(eq(vehicleCategory.lotId, lotId));
 
   const slotsCategories = await db
     .select({
-      id: db_slotsCategories.id,
-      name: db_slotsCategories.name,
-      capacity: db_slotsCategories.capacity
+      id: slotCategory.id,
+      category: slotCategory.category,
+      capacity: slotCategory.capacity
     })
-    .from(db_slotsCategories).where(eq(db_slotsCategories.lotId, lotId));
+    .from(slotCategory)
+    .where(eq(slotCategory.lotId, lotId));
+
+  const vehicleSlotCategories = await db
+    .select({
+      vehicleCategoryId: vehicleSlotCategory.vehicleCategoryId,
+      slotCategoryId: vehicleSlotCategory.slotCategoryId
+    })
+    .from(vehicleSlotCategory)
+    .innerJoin(vehicleCategory, eq(vehicleSlotCategory.vehicleCategoryId, vehicleCategory.id))
+    .where(eq(vehicleCategory.lotId, lotId));
 
   return {
     id: lotResult[0].id,
     name: lotResult[0].name,
     gates,
     vehicleCategories,
-    slotsCategories
+    slotsCategories,
+    vehicleSlotCategories
   };
 }
 
@@ -114,7 +141,7 @@ export const validateJoinToken = async (token: string) => {
   const result = await db
     .select({ token: joinToken.token })
     .from(joinToken)
-    .where(and(eq(joinToken.token, token), lt(joinToken.expiresAt, new Date())))
+    .where(and(eq(joinToken.token, token), gt(joinToken.expiresAt, new Date())))
     .limit(1);
 
   return result.length > 0;

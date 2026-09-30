@@ -4,7 +4,7 @@ import { eq } from "drizzle-orm";
 import {alias} from "drizzle-orm/pg-core";
 
 import type { CloseTicket, InitTicket } from "@/interfaces/ticket.interfaces.js"; // InitTicketSchema (req body) + lotId (param) = InitTicket
-// TODO: make these zod schemas instead of an interface
+// TODO: maybe make these zod schemas instead of an interface
 
 import { gate, parkingLot, ticket, vehicleCategory } from "@/db/schemas/db.schema.js";
 
@@ -59,7 +59,7 @@ export const getFinalTicket = async (ticketId: string) => {
 
     vehiclePlate: ticket.vehiclePlate,
 
-    vehicleCategory: vehicleCategory.name,
+    vehicleCategory: vehicleCategory.category,
     vehicleCategoryFare: vehicleCategory.fare,
 
     entryGate: entryGate.name,

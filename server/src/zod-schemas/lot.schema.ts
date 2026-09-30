@@ -1,6 +1,5 @@
 import { z } from "zod";
 
-
 export const createLotSchema = z.object({
   name: z.string().min(1, "Name is required" ).max(100, "Name must be at most 100 characters"),
   gates: z.array(
@@ -11,18 +10,26 @@ export const createLotSchema = z.object({
   ),
   vehicleCategories: z.array(
     z.object({
-      name: z.string().min(1, "Category is required").max(50, "Category must be at most 50 characters"),
+      category: z.string().min(1, "Category is required").max(50, "Category must be at most 50 characters"),
       fare: z.number().positive("Fare must be a positive number")
     })
   ),
   slotsCategories: z.array(
     z.object({
-      name: z.string().min(1, "Slot name is required").max(50, "Slot name must be at most 50 characters"),
+      category: z.string().min(1, "Category is required").max(50, "Category must be at most 50 characters"),
       capacity: z.number().int().nonnegative("Capacity must be a non-negative integer")
+    })
+  ),
+  vehicleSlotCategories: z.array(
+    z.object({
+      vehicleCategory: z.string().min(1, "Vehicle category is required").max(50, "Vehicle category must be at most 50 characters"),
+      slotCategory: z.string().min(1, "Slot category is required").max(50, "Slot category must be at most 50 characters")
     })
   )
 });
+// TODO: Add business validation for unique categories, positive fares/capacities, and valid mappings.
 export type CreateLotSchema = z.infer<typeof createLotSchema>;
+
 /* Example request body:
 {
   "name": "Downtown Parking Lot", 
@@ -38,14 +45,20 @@ export type CreateLotSchema = z.infer<typeof createLotSchema>;
   ],
   "vehicleCategories": [
     {
-      "name": "Car",
+      "category": "Car",
       "fare": 5.0
     }
   ],
   "slotsCategories": [
     {
-      "name": "Car",
+      "category": "General",
       "capacity": 50
+    }
+  ],
+  "vehicleSlotCategories": [
+    {
+      "vehicleCategory": "Car",
+      "slotCategory": "General"
     }
   ]
 }

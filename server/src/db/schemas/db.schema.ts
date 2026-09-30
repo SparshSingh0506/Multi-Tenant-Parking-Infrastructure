@@ -1,4 +1,4 @@
-import { decimal, uuid, timestamp,pgEnum, text, snakeCase, smallint } from "drizzle-orm/pg-core";
+import { decimal, uuid, timestamp, pgEnum, text, snakeCase, smallint, primaryKey } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
 
 
@@ -38,16 +38,23 @@ export const gate = table("gate", {
 export const vehicleCategory = table("vehicle_category", {
   id: uuid().defaultRandom().primaryKey(),
   lotId: uuid().notNull().references(() => parkingLot.id, { onDelete: "cascade" }),
-  name: text().notNull(),
+  category: text().notNull(),
   fare: decimal({ precision: 10, scale: 2 }).notNull(),
 });
 
-export const slotsCategory = table("slots_category", {
+export const slotCategory = table("slot_category", {
   id: uuid().defaultRandom().primaryKey(),
   lotId: uuid().notNull().references(() => parkingLot.id, { onDelete: "cascade" }),
-  name: text().notNull(), // deliberate choice to not link to vehicle category, as parking capacities can be defined independently
+  category: text().notNull(),
   capacity: smallint().notNull(),
 });
+
+export const vehicleSlotCategory = table("vehicle_slot_category", {
+  vehicleCategoryId: uuid().notNull().references(() => vehicleCategory.id, { onDelete: "cascade" }),
+  slotCategoryId: uuid().notNull().references(() => slotCategory.id, { onDelete: "cascade" }),
+}, (table) => [
+  primaryKey({ columns: [table.vehicleCategoryId, table.slotCategoryId] })
+]);
 
 export const ticket = table("ticket", {
   id: uuid().defaultRandom().primaryKey(),

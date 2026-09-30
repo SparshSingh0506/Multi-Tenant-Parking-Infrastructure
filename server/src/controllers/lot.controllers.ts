@@ -48,8 +48,6 @@ export const postJoinLotController = async (c: Context) => {
 }
 
 
-
-
 export const getLotOperatorsController = async (c: Context) => {
   const lotId = c.req.param('lotId');
 
