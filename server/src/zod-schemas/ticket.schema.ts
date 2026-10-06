@@ -14,6 +14,15 @@ export const initTicketSchema = z.object({
 });
 export type InitTicketSchema = z.infer<typeof initTicketSchema>;
 
+/*
+Sample request body for initTicketSchema:
+{
+  "vehiclePlate": "ABC-1234",
+  "vehicleCategoryId": "uuid1",
+  "entryGateId": "uuid2"
+}
+*/
+
 
 export const closeTicketSchema = z.object({
   exitGateId: z.uuid("Exit Gate Id must be a valid UUID"),

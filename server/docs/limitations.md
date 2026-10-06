@@ -1,0 +1,2 @@
+### Current Restrictions
+- Server assumes vehicle will park at the slot what the server designated it to. If the vehicle parks at a different slot, there will be inconsistencies in the count of available slots. 

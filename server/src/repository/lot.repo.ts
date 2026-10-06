@@ -1,15 +1,16 @@
 import { db } from "@/configs/db.config.js";
 import { and, eq, gt } from "drizzle-orm";
 import type { CreateLotSchema } from "@/zod-schemas/lot.schema.js";
-import { gate, parkingLot, vehicleCategory, slotCategory, vehicleSlotCategory, user, joinToken } from "@/db/schemas/index.schema.js";
+import { gate, parkingLot, vehicleCategory, user, joinToken } from "@/db/schemas/index.schema.js";
 
 
 export const createInitLotData = async (data: CreateLotSchema) => {
-  const { name, gates, vehicleCategories, slotsCategories, vehicleSlotCategories } = data;
+  const { name, capacity, gates, vehicleCategories } = data;
 
   const result = await db.transaction(async (tx) => {
     const [{ id }] = await tx.insert(parkingLot).values({
-      name
+      name,
+      capacity
     }).returning();
 
     const gateResults = await tx.insert(gate).values(gates.map(gate => ({
@@ -24,34 +25,12 @@ export const createInitLotData = async (data: CreateLotSchema) => {
       lotId: id
     }))).returning();
 
-    const vehicleCategoryIds = new Map(
-      vehicleCategoryResults.map(category => [category.category, category.id])
-    );
-
-    const slotCategoryResults = await tx.insert(slotCategory).values(slotsCategories.map(slot => ({
-      category: slot.category,
-      capacity: slot.capacity,
-      lotId: id
-    }))).returning();
-
-    const slotCategoryIds = new Map(
-      slotCategoryResults.map(category => [category.category, category.id])
-    );
-
-    const vehicleSlotCategoryResults = await tx.insert(vehicleSlotCategory).values(
-      vehicleSlotCategories.map(mapping => ({
-        vehicleCategoryId: vehicleCategoryIds.get(mapping.vehicleCategory)!,
-        slotCategoryId: slotCategoryIds.get(mapping.slotCategory)!
-      }))
-    ).returning();
-
     return {
       id,
       name,
+      capacity,
       gates: gateResults,
       vehicleCategories: vehicleCategoryResults,
-      slotsCategories: slotCategoryResults,
-      vehicleSlotCategories: vehicleSlotCategoryResults,
     };
   });
 
@@ -64,6 +43,7 @@ export const getStaticLotDetails = async (lotId: string) => {
     .select({
       id: parkingLot.id,
       name: parkingLot.name,
+      capacity: parkingLot.capacity,
     })
     .from(parkingLot).where(eq(parkingLot.id, lotId));
 
@@ -83,31 +63,12 @@ export const getStaticLotDetails = async (lotId: string) => {
     })
     .from(vehicleCategory).where(eq(vehicleCategory.lotId, lotId));
 
-  const slotsCategories = await db
-    .select({
-      id: slotCategory.id,
-      category: slotCategory.category,
-      capacity: slotCategory.capacity
-    })
-    .from(slotCategory)
-    .where(eq(slotCategory.lotId, lotId));
-
-  const vehicleSlotCategories = await db
-    .select({
-      vehicleCategoryId: vehicleSlotCategory.vehicleCategoryId,
-      slotCategoryId: vehicleSlotCategory.slotCategoryId
-    })
-    .from(vehicleSlotCategory)
-    .innerJoin(vehicleCategory, eq(vehicleSlotCategory.vehicleCategoryId, vehicleCategory.id))
-    .where(eq(vehicleCategory.lotId, lotId));
-
   return {
     id: lotResult[0].id,
     name: lotResult[0].name,
+    capacity: lotResult[0].capacity,
     gates,
-    vehicleCategories,
-    slotsCategories,
-    vehicleSlotCategories
+    vehicleCategories
   };
 }
 

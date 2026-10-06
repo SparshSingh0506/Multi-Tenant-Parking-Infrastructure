@@ -9,44 +9,32 @@ import type { CloseTicket, InitTicket } from "@/interfaces/ticket.interfaces.js"
 import {
   gate,
   parkingLot,
-  slotCategory,
   ticket,
-  vehicleCategory,
-  vehicleSlotCategory
+  vehicleCategory
 } from "@/db/schemas/db.schema.js";
 
 
-const getAvailableSlotCapacity = async (tx: any, lotId: string, vehicleCategoryId: string) => {
-  const [slot] = await tx
+const getAvailableLotCapacity = async (tx: any, lotId: string) => {
+  const [lot] = await tx
     .select({
-      id: slotCategory.id,
-      capacity: slotCategory.capacity,
+      capacity: parkingLot.capacity,
     })
-    .from(slotCategory)
-    .innerJoin(vehicleSlotCategory, eq(vehicleSlotCategory.slotCategoryId, slotCategory.id))
-    .where(and(
-      eq(slotCategory.lotId, lotId),
-      eq(vehicleSlotCategory.vehicleCategoryId, vehicleCategoryId)
-    ))
+    .from(parkingLot)
+    .where(eq(parkingLot.id, lotId))
     .limit(1)
     .for("update");
 
-  if (!slot) return 0;
+  if (!lot) return 0;
 
   const [occupancy] = await tx
     .select({ count: count(ticket.id) })
     .from(ticket)
-    .innerJoin(
-      vehicleSlotCategory,
-      eq(vehicleSlotCategory.vehicleCategoryId, ticket.vehicleCategoryId)
-    )
     .where(and(
-      eq(vehicleSlotCategory.slotCategoryId, slot.id),
       eq(ticket.lotId, lotId),
       isNull(ticket.closedAt)
     ));
 
-  return slot.capacity - occupancy.count;
+  return lot.capacity - occupancy.count;
 };
 
 
@@ -54,10 +42,10 @@ export const createTicket = async (data: InitTicket) => {
   const { lotId, vehiclePlate, vehicleCategoryId, entryGateId } = data;
 
   const result = await db.transaction(async (tx) => {
-    const availableCapacity = await getAvailableSlotCapacity(tx, lotId, vehicleCategoryId);
+    const availableCapacity = await getAvailableLotCapacity(tx, lotId);
 
     if (availableCapacity <= 0) {
-      throw new Error("No available slots for the selected vehicle category");
+      throw new Error("No available parking capacity");
     }
 
     const ticketResult = await tx.insert(ticket).values({
